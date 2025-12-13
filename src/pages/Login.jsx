@@ -1,21 +1,20 @@
-import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import React, { useState, useContext } from "react";
+
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const { login, loginWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-
     try {
       await login(email, password);
-      setError("");
-      navigate("/lessons");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -24,33 +23,64 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
-      setError("");
-      navigate("/lessons");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input type="email" name="email" required />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" name="password" required />
-        </div>
-        <button type="submit">Login</button>
-      </form>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50">
+      <div className="bg-white shadow-md rounded p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-      <button onClick={handleGoogleLogin} style={{ marginTop: "20px" }}>
-        Login with Google
-      </button>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border p-2 rounded"
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded"
+            required
+          />
+
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            Login
+          </button>
+        </form>
+
+        <div className="mt-4 text-center">
+          <button
+            onClick={handleGoogleLogin}
+            className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+          >
+            Login with Google
+          </button>
+        </div>
+
+        <div className="mt-4 text-center text-sm text-gray-500">
+          <p>
+            Don't have an account?{" "}
+            <a href="/signup" className="text-blue-600">
+              Sign up
+            </a>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
