@@ -1,79 +1,129 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
+  const { user, logout } = useContext(AuthContext);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
   return (
-    <div className="navbar bg-base-100 shadow-sm">
-      <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              {" "}
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />{" "}
-            </svg>
-          </div>
-          <ul
-            tabIndex="-1"
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-3">
+        {/* Logo */}
+        <Link to="/" className="text-xl font-bold text-blue-600">
+          Digital Life Lessons
+        </Link>
+
+        {/* Navigation Links */}
+        <nav className="flex items-center space-x-4">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+            }
           >
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <a>Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a>Item 3</a>
-            </li>
-          </ul>
+            Home
+          </NavLink>
+          <NavLink
+            to="/lessons"
+            className={({ isActive }) =>
+              isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+            }
+          >
+            Public Lessons
+          </NavLink>
+          {user && (
+            <>
+              <NavLink
+                to="/dashboard/add-lesson"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+                }
+              >
+                Add Lesson
+              </NavLink>
+              <NavLink
+                to="/dashboard/my-lessons"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+                }
+              >
+                My Lessons
+              </NavLink>
+              <NavLink
+                to="/dashboard/upgrade"
+                className={({ isActive }) =>
+                  isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+                }
+              >
+                Pricing / Upgrade
+              </NavLink>
+            </>
+          )}
+        </nav>
+
+        {/* User Section */}
+        <div className="relative">
+          {user ? (
+            <div className="flex items-center gap-2">
+              <img
+                src={user.photoURL || "/default-avatar.png"}
+                alt={user.displayName}
+                className="w-10 h-10 rounded-full cursor-pointer"
+                onClick={toggleDropdown}
+              />
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg py-2 z-50">
+                  <p className="px-4 py-2 text-gray-700 font-medium">
+                    {user.displayName || "User"}
+                  </p>
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    to="/dashboard"
+                    className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                  >
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Link
+                to="/login"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50"
+              >
+                Signup
+              </Link>
+            </div>
+          )}
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
       </div>
-      <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <a>Item 1</a>
-          </li>
-          <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="p-2 bg-base-100 w-40 z-1">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <a>Item 3</a>
-          </li>
-        </ul>
-      </div>
-      <div className="navbar-end">
-        <a className="btn">Button</a>
-      </div>
-    </div>
+    </header>
   );
 };
 
