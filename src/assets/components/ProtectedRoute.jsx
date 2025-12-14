@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+
 import { Navigate, Outlet } from "react-router-dom";
 import Loading from "../../pages/Loading";
+import { AuthContext } from "../../context/AuthContext";
 
 const ProtectedRoute = ({ adminOnly = false }) => {
   const { user, loading } = useContext(AuthContext);
